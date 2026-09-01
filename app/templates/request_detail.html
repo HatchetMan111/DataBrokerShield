@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Anfrage #{{ tr.id }}{% endblock %}
+{% block content %}
+<h1>Anfrage #{{ tr.id }} – {{ broker.name }}</h1>
+
+<div class="detail-grid">
+  <div>
+    <h2>Status</h2>
+    <form method="post" action="/requests/{{ tr.id }}/status" class="inline-form">
+      <select name="status">
+        {% for s in statuses %}
+        <option value="{{ s }}" {% if s == tr.status.value %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Setzen</button>
+    </form>
+    <table class="table">
+      <tr><th>Profil</th><td>{{ profile.first_name }} {{ profile.last_name }}</td></tr>
+      <tr><th>Rechtsgrundlage</th><td>{{ law }}</td></tr>
+      <tr><th>Gesendet</th><td>{{ tr.sent_at or '–' }}</td></tr>
+      <tr><th>Bestätigt</th><td>{{ tr.response_at or '–' }}</td></tr>
+      <tr><th>Gelöscht</th><td>{{ tr.deleted_at or '–' }}</td></tr>
+      <tr><th>Wiedervorlage</th><td>{{ tr.next_check_at or '–' }}</td></tr>
+      <tr><th>Manuelle Aktion</th><td>{{ 'Ja' if tr.confirmation_pending else 'Nein' }} {{ tr.manual_action_url }}</td></tr>
+    </table>
+    {% if broker.opt_out_url %}
+    <p><a href="{{ broker.opt_out_url }}" target="_blank" rel="noopener">Opt-out-Formular des Brokers öffnen</a></p>
+    {% endif %}
+  </div>
+
+  <div>
+    <h2>Anfragetext</h2>
+    <form method="post" action="/requests/{{ tr.id }}/regenerate" class="inline-form">
+      <select name="law_basis">
+        {% for l in ['DSGVO Art. 17', 'CCPA', 'Generisch'] %}
+        <option value="{{ l }}" {% if l == law %}selected{% endif %}>{{ l }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Neu generieren</button>
+    </form>
+    <form method="post" action="/requests/{{ tr.id }}/send" class="inline-form">
+      <button type="submit" {% if not smtp_ready or not broker.email %}disabled title="SMTP oder Broker-E-Mail fehlt"{% endif %}>
+        Per SMTP versenden
+      </button>
+    </form>
+    <textarea class="request-text" rows="18" readonly>{{ tr.request_text }}</textarea>
+    <h2>Verlauf</h2>
+    <ul class="history">
+      {% for h in tr.history or [] %}
+      <li>{{ h.at }} – {{ h.entry }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

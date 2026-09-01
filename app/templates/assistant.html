@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Assistent{% endblock %}
+{% block content %}
+<h1>Datenschutz-Assistent (Ollama)</h1>
+
+{% if not ollama_enabled %}
+<p class="hint">Ollama ist nicht konfiguriert. Unter <a href="/settings">Einstellungen</a>
+eine <code>BROKERSHIELD_OLLAMA_URL</code> hinterlegen (z. B. <code>http://192.168.1.50:11434</code>),
+um Briefe formulieren oder Fragen stellen zu können. Der LXC braucht dafür keine GPU/Extra-RAM –
+Ollama läuft extern.</p>
+{% endif %}
+
+<form method="post" action="/assistant/ask" class="form">
+  <label>Deine Frage / Aufgabe
+    <textarea name="prompt" rows="4" placeholder="z. B. Formuliere eine Nachfass-Erinnerung an einen Broker, der nach 30 Tagen nicht geantwortet hat.">{{ prompt or '' }}</textarea>
+  </label>
+  <button type="submit" {% if not ollama_enabled %}disabled{% endif %}>Fragen</button>
+</form>
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+{% if answer %}
+<div class="alert alert-ok">
+  <strong>Antwort (Modell: {{ model }})</strong>
+  <pre>{{ answer }}</pre>
+</div>
+{% endif %}
+{% endblock %}

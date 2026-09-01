@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Broker{% endblock %}
+{% block content %}
+<h1>Broker-Datenbank</h1>
+
+<form method="get" class="filter-form">
+  <input type="text" name="q" value="{{ q }}" placeholder="Name suchen …">
+  <select name="region">
+    <option value="">Alle Regionen</option>
+    {% for r in regions %}
+    <option value="{{ r }}" {% if r == region %}selected{% endif %}>{{ r }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Filtern</button>
+  <a class="btn" href="/brokers/new">+ Broker</a>
+</form>
+
+<p>{{ total }} Treffer (Seite {{ page }})</p>
+
+<table class="table">
+  <tr><th>Name</th><th>Region</th><th>Kategorie</th><th>Quelle</th><th>E-Mail</th><th>Opt-out</th><th></th></tr>
+  {% for b in brokers %}
+  <tr>
+    <td><a href="/brokers/{{ b.id }}">{{ b.name }}</a></td>
+    <td>{{ b.region }}</td>
+    <td>{{ b.category }}</td>
+    <td>{{ b.source }}</td>
+    <td>{{ b.email or '–' }}</td>
+    <td>
+      {% if b.opt_out_url %}<a href="{{ b.opt_out_url }}" target="_blank" rel="noopener">Opt-out-Link</a>{% else %}–{% endif %}
+    </td>
+    <td><a class="btn btn-sm" href="/requests/new?broker_id={{ b.id }}">Anfrage</a></td>
+  </tr>
+  {% endfor %}
+</table>
+
+<div class="pager">
+  {% if page > 1 %}<a href="/brokers?q={{ q }}&region={{ region }}&page={{ page - 1 }}">&larr; zurück</a>{% endif %}
+  <span>Seite {{ page }} von {{ ((total + page_size - 1) // page_size) if total else 1 }}</span>
+  {% if page * page_size < total %}<a href="/brokers?q={{ q }}&region={{ region }}&page={{ page + 1 }}">weiter &rarr;</a>{% endif %}
+</div>
+{% endblock %}

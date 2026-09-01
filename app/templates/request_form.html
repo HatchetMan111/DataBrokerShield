@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Neue Anfrage{% endblock %}
+{% block content %}
+<h1>Neue Löschungsanfrage</h1>
+
+{% if not profiles %}
+<p class="hint">Zuerst ein <a href="/profiles/new">Profil</a> anlegen – Anfragen brauchen Identifikationsdaten.</p>
+{% endif %}
+
+<form method="post" action="/requests/create" class="form">
+  <label>Profil *
+    <select name="profile_id" required>
+      {% for p in profiles %}
+      <option value="{{ p.id }}" {% if p.id == preselect_profile %}selected{% endif %}>
+        {{ p.first_name }} {{ p.last_name }} ({{ p.email or p.city or 'ID ' ~ p.id }})
+      </option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Broker *
+    <select name="broker_pk" required>
+      {% for b in brokers %}
+      <option value="{{ b.id }}" {% if b.id == preselect_broker %}selected{% endif %}>
+        {{ b.name }} ({{ b.region }})
+      </option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Rechtsgrundlage
+    <select name="law_basis">
+      {% for l in laws %}
+      <option value="{{ l }}">{{ l }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button type="submit" {% if not profiles or not brokers %}disabled{% endif %}>Anfrage erzeugen</button>
+</form>
+<p class="hint">Der Anfragetext wird automatisch erzeugt und lässt sich danach bearbeiten bzw. neu generieren.</p>
+{% endblock %}

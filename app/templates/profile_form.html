@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Profil bearbeiten' if p else 'Neues Profil' }}{% endblock %}
+{% block content %}
+<h1>{{ 'Profil bearbeiten' if p else 'Neues Profil' }}</h1>
+
+<form method="post" action="/profiles/save" class="form">
+  {% if p %}<input type="hidden" name="profile_id" value="{{ p.id }}">{% endif %}
+  <label>Vorname *<input type="text" name="first_name" value="{{ p.first_name if p else '' }}" required></label>
+  <label>Nachname *<input type="text" name="last_name" value="{{ p.last_name if p else '' }}" required></label>
+  <label>E-Mail<input type="email" name="email" value="{{ p.email if p else '' }}"></label>
+  <label>Straße<input type="text" name="address" value="{{ p.address if p else '' }}"></label>
+  <label>PLZ<input type="text" name="zip_code" value="{{ p.zip_code if p else '' }}"></label>
+  <label>Stadt<input type="text" name="city" value="{{ p.city if p else '' }}"></label>
+  <label>Land (2 Buchstaben)<input type="text" name="country" maxlength="2" value="{{ p.country if p else 'DE' }}"></label>
+  <label>Telefon<input type="text" name="phone" value="{{ p.phone if p else '' }}"></label>
+  <label>Geburtsdatum<input type="date" name="date_of_birth" value="{{ p.date_of_birth if p else '' }}"></label>
+  <label>Notizen<textarea name="notes" rows="3">{{ p.notes if p else '' }}</textarea></label>
+  <p class="hint">Diese Daten verwenden Löschungsanfragen zur Identifikation. Sie bleiben lokal in der SQLite-DB.</p>
+  <button type="submit">Speichern</button>
+  <a class="btn" href="/profiles">Abbrechen</a>
+</form>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Anfragen{% endblock %}
+{% block content %}
+<h1>Löschungsanfragen</h1>
+
+<form method="get" class="filter-form">
+  <select name="status" onchange="this.form.submit()">
+    <option value="">Alle Status</option>
+    {% for s in statuses %}
+    <option value="{{ s }}" {% if s == status_filter %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+</form>
+<p><a class="btn" href="/requests/new">+ Neue Anfrage</a></p>
+
+{% if rows %}
+<table class="table">
+  <tr><th>ID</th><th>Broker</th><th>Profil</th><th>Status</th><th>Rechtsgrundlage</th><th>Gesendet</th><th>Wiedervorlage</th><th></th></tr>
+  {% for r in rows %}
+  <tr>
+    <td><a href="/requests/{{ r.id }}">#{{ r.id }}</a></td>
+    <td>{{ broker_names.get(r.broker_id, '#' ~ r.broker_id) }}</td>
+    <td>{{ profile_names.get(r.profile_id, '#' ~ r.profile_id) }}</td>
+    <td>{{ r.status.value }}</td>
+    <td>{{ r.law_basis.value }}</td>
+    <td>{{ r.sent_at.strftime('%d.%m.%Y') if r.sent_at else '–' }}</td>
+    <td>{{ r.next_check_at.strftime('%d.%m.%Y') if r.next_check_at else '–' }}</td>
+    <td><a class="btn btn-sm" href="/requests/{{ r.id }}">Öffnen</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Noch keine Anfragen. <a href="/requests/new">Erste Anfrage anlegen</a>.</p>
+{% endif %}
+
+{% if not smtp_ready %}
+<p class="hint">SMTP nicht konfiguriert – Versand per Web-UI deaktiviert. Texte können aus jeder Anfrage-Detailseite manuell kopiert werden.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<div class="cards">
+  <div class="card"><div class="card-num">{{ stats.brokers }}</div><div class="card-label">Broker in DB</div></div>
+  <div class="card"><div class="card-num">{{ stats.profiles }}</div><div class="card-label">Profile</div></div>
+  <div class="card"><div class="card-num">{{ stats.requests }}</div><div class="card-label">Anfragen gesamt</div></div>
+  <div class="card"><div class="card-num">{{ stats.deleted }}</div><div class="card-label">Gelöscht</div></div>
+  <div class="card"><div class="card-num">{{ stats.pending_manual }}</div><div class="card-label">Manuelle Aktion nötig</div></div>
+  <div class="card"><div class="card-num">{{ stats.due_recheck }}</div><div class="card-label">Wiedervorlage fällig</div></div>
+</div>
+
+<h2>Status-Verteilung</h2>
+<table class="table">
+  <tr><th>Status</th><th>Anzahl</th></tr>
+  {% for row in status_rows %}
+  <tr>
+    <td><a href="/requests?status={{ row.status.value }}">{{ row.status.value }}</a></td>
+    <td>{{ row.count }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>Letzte Aktivität</h2>
+{% if recent %}
+<table class="table">
+  <tr><th>Anfrage</th><th>Broker</th><th>Status</th><th>Aktualisiert</th></tr>
+  {% for r in recent %}
+  <tr>
+    <td><a href="/requests/{{ r.id }}">#{{ r.id }}</a></td>
+    <td>{{ r.broker }}</td>
+    <td>{{ r.status }}</td>
+    <td>{{ r.updated.strftime('%d.%m.%Y %H:%M') if r.updated else '–' }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Noch keine Anfragen. <a href="/requests/new">Erste Anfrage anlegen</a>.</p>
+{% endif %}
+
+{% if not ollama_enabled %}
+<p class="hint">Hinweis: Ollama-Assistent nicht konfiguriert – optional unter <a href="/settings">Einstellungen</a> aktivierbar.</p>
+{% endif %}
+{% endblock %}

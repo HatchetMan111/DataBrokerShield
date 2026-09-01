@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}BrokerShield{% endblock %} · BrokerShield</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="/">🛡 BrokerShield</a>
+  <div class="nav-links">
+    <a href="/">Dashboard</a>
+    <a href="/brokers">Broker</a>
+    <a href="/profiles">Profile</a>
+    <a href="/requests">Anfragen</a>
+    <a href="/rechecks">Wiedervorlage</a>
+    <a href="/assistant">Assistent</a>
+    <a href="/settings">Einstellungen</a>
+    <a href="/logout">Abmelden</a>
+  </div>
+</nav>
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer">
+  BrokerShield – lokales Dashboard für digitale Souveränität. Keine Rechtsberatung.
+  Broker-Seed: <a href="https://github.com/digisamroc/eraser" rel="noopener">eraser</a> (MIT).
+</footer>
+</body>
+</html>

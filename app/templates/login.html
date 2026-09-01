@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<h1>BrokerShield Login</h1>
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+<form method="post" action="/login" class="form">
+  <label>Passwort<input type="password" name="password" autofocus required></label>
+  <button type="submit">Anmelden</button>
+</form>
+<p class="hint">Standard-Passwort: <code>brokershield</code> – bitte per
+<code>BROKERSHIELD_ADMIN_PASSWORD</code> in der Env-Datei ändern.</p>
+{% endblock %}

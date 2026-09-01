@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Wiedervorlage{% endblock %}
+{% block content %}
+<h1>Wiedervorlage – Broker prüfen</h1>
+<p class="hint">Datenbroker re-scrapen laufend. Diese Anfragen sind zur Nachprüfung fällig:
+Öffne die Broker-Suche (People-Sites, Suchmaschinen) und prüfe, ob die Daten wieder auftauchen.</p>
+
+{% if rows %}
+<table class="table">
+  <tr><th>Anfrage</th><th>Broker</th><th>Fällig seit</th><th>Status</th><th></th></tr>
+  {% for r in rows %}
+  <tr>
+    <td><a href="/requests/{{ r.id }}">#{{ r.id }}</a></td>
+    <td>{{ broker_names.get(r.broker_id, '#' ~ r.broker_id) }}</td>
+    <td>{{ r.next_check_at.strftime('%d.%m.%Y') }}</td>
+    <td>{{ r.status.value }}</td>
+    <td>
+      <a class="btn btn-sm" href="/requests/{{ r.id }}">Öffnen &amp; Status setzen</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Keine fälligen Wiedervorlagen. 🎉</p>
+{% endif %}
+{% endblock %}

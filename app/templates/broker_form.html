@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Broker bearbeiten{% endblock %}
+{% block content %}
+<h1>{{ 'Broker bearbeiten' if b else 'Neuer Broker' }}</h1>
+
+<form method="post" action="/brokers/save" class="form">
+  {% if b %}<input type="hidden" name="broker_pk" value="{{ b.id }}">{% endif %}
+  <label>Name *<input type="text" name="name" value="{{ b.name if b else '' }}" required></label>
+  <label>Kontakt-E-Mail<input type="email" name="email" value="{{ b.email if b else '' }}"></label>
+  <label>Website<input type="url" name="website" value="{{ b.website if b else '' }}"></label>
+  <label>Opt-out-URL<input type="url" name="opt_out_url" value="{{ b.opt_out_url if b else '' }}"></label>
+  <label>Region
+    <select name="region">
+      {% for r in ['eu', 'us', 'global'] %}
+      <option value="{{ r }}" {% if b and b.region == r %}selected{% endif %}>{{ r }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Kategorie<input type="text" name="category" value="{{ b.category if b else 'marketing' }}"></label>
+  <label>Notizen<textarea name="notes" rows="3">{{ b.notes if b else '' }}</textarea></label>
+  <button type="submit">Speichern</button>
+  <a class="btn" href="/brokers">Abbrechen</a>
+</form>
+{% endblock %}

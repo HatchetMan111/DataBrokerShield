@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Einstellungen{% endblock %}
+{% block content %}
+<h1>Einstellungen</h1>
+
+{% if saved %}<div class="alert alert-ok">Einstellungen gespeichert.</div>{% endif %}
+
+<h2>SMTP (optional – für direkten Mailversand)</h2>
+<form method="post" action="/settings/save" class="form" id="settings-form">
+  <label>SMTP-Host<input name="smtp_host" value="{{ smtp.host }}" placeholder="smtp.gmail.com"></label>
+  <label>SMTP-Port<input name="smtp_port" value="{{ smtp.port }}" type="number"></label>
+  <label>SMTP-User<input name="smtp_user" value="{{ smtp.user }}"></label>
+  <label>SMTP-From<input name="smtp_from" value="{{ smtp.from }}" placeholder="ich@gmail.com"></label>
+  <label>SMTP-App-Password<input name="smtp_password" type="password" placeholder="{{ 'gesetzt – leer lassen zum Behalten' if smtp.has_password else 'nicht gesetzt' }}"></label>
+
+  <h2>Ollama (optional – externer Server)</h2>
+  <label>Ollama-URL<input name="ollama_url" value="{{ ollama.url }}" placeholder="http://192.168.1.50:11434"></label>
+  <label>Ollama-Modell<input name="ollama_model" value="{{ ollama.model }}" placeholder="llama3.1:8b"></label>
+  {% if ollama.status and ollama.status.enabled %}
+    {% if ollama.status.ok %}
+      <p class="hint ok">Ollama erreichbar – Modelle: {{ ollama.status.models|join(', ') }}</p>
+    {% else %}
+      <p class="hint err">Ollama konfiguriert, aber nicht erreichbar: {{ ollama.status.error }}</p>
+    {% endif %}
+  {% endif %}
+
+  <h2>Wiedervorlage</h2>
+  <label>Re-Check nach N Tagen (nach „gelöscht“)<input name="recheck_days" type="number" value="{{ recheck_days }}"></label>
+
+  <h2>Admin</h2>
+  <label>Neues Admin-Passwort (leer = unverändert)<input name="admin_password" type="password" autocomplete="new-password"></label>
+
+  <button type="submit">Speichern</button>
+</form>
+<p class="hint">Einstellungen landen in <code>/etc/brokershield/brokershield.env</code> (chmod 600) und werden
+nach <code>systemctl restart brokershield</code> aktiv. SMTP ohne Konfiguration: Anfragetexte einfach manuell kopieren.</p>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('settings-form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const form = ev.target;
+  const res = await fetch(form.action, {method: 'POST', body: new FormData(form)});
+  const data = await res.json();
+  alert(data.ok ? data.note : ('Fehler: ' + data.error));
+  if (data.ok) location.reload();
+});
+</script>
+{% endblock %}

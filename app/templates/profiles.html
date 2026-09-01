@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h1>Profile</h1>
+<p><a class="btn" href="/profiles/new">+ Neues Profil</a></p>
+
+{% if profiles %}
+<table class="table">
+  <tr><th>Name</th><th>E-Mail</th><th>Ort</th><th>Land</th><th></th></tr>
+  {% for p in profiles %}
+  <tr>
+    <td><a href="/profiles/{{ p.id }}">{{ p.first_name }} {{ p.last_name }}</a></td>
+    <td>{{ p.email or '–' }}</td>
+    <td>{{ (p.zip_code ~ ' ' ~ p.city).strip() or '–' }}</td>
+    <td>{{ p.country }}</td>
+    <td>
+      <form method="post" action="/profiles/{{ p.id }}/delete" class="inline"
+            onsubmit="return confirm('Profil wirklich löschen?')">
+        <button type="submit" class="btn-danger btn-sm">Löschen</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Noch kein Profil. <a href="/profiles/new">Profil anlegen</a> – ohne Profil lassen sich keine Anfragen erzeugen.</p>
+{% endif %}
+{% endblock %}
