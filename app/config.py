@@ -24,7 +24,7 @@ class Settings:
             "BROKERSHIELD_DB", str(BASE_DIR / "data" / "brokershield.db")
         )
         self.admin_password: str = os.getenv(
-            "BROKERSHIELD_ADMIN_PASSWORD", "brokershield"
+            "BROKERSHIELD_ADMIN_PASSWORD", "admin"
         )
 
         # Ollama optional/extern: leer = deaktiviert

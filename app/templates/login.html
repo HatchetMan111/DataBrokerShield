@@ -1,12 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
-{% block content %}
-<h1>BrokerShield Login</h1>
-{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
-<form method="post" action="/login" class="form">
-  <label>Passwort<input type="password" name="password" autofocus required></label>
-  <button type="submit">Anmelden</button>
-</form>
-<p class="hint">Standard-Passwort: <code>brokershield</code> – bitte per
-<code>BROKERSHIELD_ADMIN_PASSWORD</code> in der Env-Datei ändern.</p>
+{% block title %}Anmelden{% endblock %}
+
+{% block body %}
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-icon">🛡</div>
+    <div class="login-brand">BrokerShield</div>
+    <div class="login-subtitle">Digitale Souveränität</div>
+
+    {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+    <form method="post" action="/login">
+      <label for="pw">Passwort</label>
+      <input id="pw" type="password" name="password" autofocus required
+             placeholder="Admin-Passwort eingeben" autocomplete="current-password">
+      <button type="submit">Anmelden</button>
+    </form>
+
+    <p class="login-hint">
+      Standard: <code>admin</code><br>
+      Nach dem Login unter <a href="/settings">Einstellungen</a> ändern.
+    </p>
+  </div>
+</div>
 {% endblock %}

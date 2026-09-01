@@ -31,12 +31,14 @@ Erwartete Ausgabe am Ende:
   Installation abgeschlossen ✔  —  Deine Daten. Deine Hoheit.
 ------------------------------------------------------------------------
   Web-UI   :  http://<CT-IP>:8080
-  Login    :  Passwort 'brokershield' (bitte sofort ändern!)
+  Login    :  Passwort 'admin' (in der UI ändern!)
   ...
 ========================================================================
 ```
 
-**Login-Passwort ändern:** `pct enter <CTID>` → `EDITOR=nano systemctl edit brokershield` oder direkt `/etc/brokershield/brokershield.env` → `BROKERSHIELD_ADMIN_PASSWORD=...` → `systemctl restart brokershield`.
+**Login-Passwort ändern:** Nach dem Login unter **Einstellungen** (`/settings`) ein neues Passwort eingeben und speichern. Das neue Passwort ist sofort aktiv – der alte Login-Session-Cookie wird dadurch ungültig (Sicherheitsfeature).
+
+Alternative: `pct enter <CTID>` → `/etc/brokershield/brokershield.env` → `BROKERSHIELD_ADMIN_PASSWORD=...` → `systemctl restart brokershield`.
 
 ## Erste Schritte in der UI
 

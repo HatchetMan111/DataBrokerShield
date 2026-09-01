@@ -48,7 +48,7 @@ NET_CIDR="${NET_CIDR:-}"          # z. B. 192.168.1.100/24 (bei NET_MODE=static)
 NET_GW="${NET_GW:-}"              # z. B. 192.168.1.1
 
 WEB_PORT="${WEB_PORT:-8080}"
-ADMIN_PASSWORD="${ADMIN_PASSWORD:-brokershield}"
+ADMIN_PASSWORD="${ADMIN_PASSWORD:-admin}"
 
 MODE="${MODE:-install}"           # install | update | uninstall
 DEBUG="${DEBUG:-0}"
@@ -370,7 +370,7 @@ print_guest_summary() {
   ${APP_NAME} wurde erfolgreich installiert ✔
 ==========================================================
   Web-UI      :  http://${ip}:${WEB_PORT}
-  Login       :  Passwort '${ADMIN_PASSWORD}' (bitte ändern!)
+  Login       :  Passwort 'admin' (bitte in der UI ändern!)
   Broker-DB   :  770+ Broker vorgeladen (eraser-MIT-Seed + EU-Kuratierung)
   Container   :  unprivileged LXC, onboot=1
   Daten       :  /var/lib/brokershield (SQLite-DB, überlebt Updates)
@@ -775,7 +775,7 @@ BANNER
   Installation abgeschlossen ✔  —  Deine Daten. Deine Hoheit.
 ------------------------------------------------------------------------
   Web-UI   :  http://${CT_IP}:${WEB_PORT}
-  Login    :  Passwort '${ADMIN_PASSWORD}' (bitte sofort ändern!)
+  Login    :  Passwort 'admin' (in der UI ändern!)
   Container:  ${APP_ID} (ID ${CTID}, unprivileged, onboot=1)
   Einstieg :  pct enter ${CTID}
   Update   :  Einzeiler erneut ausführen (erkennt den Container automatisch)

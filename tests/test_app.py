@@ -148,7 +148,7 @@ def test_settings_save_writes_env(client, tmp_path, monkeypatch):
             "ollama_url": "http://ollama.lan:11434",
             "ollama_model": "llama3.1:8b",
             "recheck_days": "90",
-            "admin_password": "neues-passwort",
+            "admin_password": "neues-pw",
         },
     )
     data = r.json()
@@ -157,8 +157,12 @@ def test_settings_save_writes_env(client, tmp_path, monkeypatch):
     content = env_file.read_text()
     assert "BROKERSHIELD_SMTP_HOST=smtp.example.com" in content
     assert "BROKERSHIELD_OLLAMA_URL=http://ollama.lan:11434" in content
-    assert "BROKERSHIELD_ADMIN_PASSWORD=neues-passwort" in content
+    assert "BROKERSHIELD_ADMIN_PASSWORD=neues-pw" in content
     assert oct(env_file.stat().st_mode & 0o777) == "0o600"
+
+    # Passwort-Änderung hat Session ungültig gemacht → neu einloggen
+    get_settings.cache_clear()
+    client.post("/login", data={"password": "neues-pw"})
 
     # Leere Felder löschen Einträge (Ollama deaktivieren)
     r = client.post(
@@ -168,7 +172,7 @@ def test_settings_save_writes_env(client, tmp_path, monkeypatch):
     assert r.json()["ok"] is True
     content = env_file.read_text()
     assert "BROKERSHIELD_OLLAMA_URL" not in content
-    assert "BROKERSHIELD_ADMIN_PASSWORD=neues-passwort" in content  # bleibt erhalten
+    assert "BROKERSHIELD_ADMIN_PASSWORD=neues-pw" in content  # bleibt erhalten
 
     import os
 

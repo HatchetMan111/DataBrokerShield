@@ -1,4 +1,4 @@
-import json
+import os
 from pathlib import Path
 
 from fastapi import APIRouter, Request
@@ -75,6 +75,12 @@ async def save_settings(request: Request):
             {"ok": False, "error": f"Konnte {_env_file()} nicht schreiben: {exc!r}"},
             status_code=500,
         )
+
+    # Passwort sofort im laufenden Prozess übernehmen – Session-Token
+    # ändert sich (HMAC), alter Cookie wird ungültig → User muss sich
+    # mit neuem Passwort neu einloggen.
+    if new_admin_pw:
+        os.environ["BROKERSHIELD_ADMIN_PASSWORD"] = new_admin_pw
 
     get_settings.cache_clear()
     return JSONResponse(
