@@ -5,7 +5,7 @@ from sqlalchemy import func, or_, select
 
 from ..database import SessionLocal
 from ..main import TEMPLATE_DIR
-from ..models import Broker
+from ..models import Broker, Profile
 
 router = APIRouter()
 
@@ -52,6 +52,7 @@ def list_brokers(
             .all()
         )
         regions = sorted({r[0] for r in db.execute(select(Broker.region).distinct()).all()})
+        profiles = db.execute(select(Profile).order_by(Profile.id)).scalars().all()
     return _templates().TemplateResponse(
         request,
         "brokers.html",
@@ -63,6 +64,7 @@ def list_brokers(
             "page": page,
             "total": total,
             "page_size": PAGE_SIZE,
+            "profiles": profiles,
         },
     )
 

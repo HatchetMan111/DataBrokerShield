@@ -1,22 +1,69 @@
 {% extends "base.html" %}
 {% block title %}{{ 'Profil bearbeiten' if p else 'Neues Profil' }}{% endblock %}
 {% block content %}
-<h1>{{ 'Profil bearbeiten' if p else 'Neues Profil' }}</h1>
+<h1>{{ 'Profil bearbeiten' if p else 'Neues Profil anlegen' }}</h1>
 
-<form method="post" action="/profiles/save" class="form">
+<p class="hint" style="margin-bottom:1.2rem">
+  Dieses Profil wird in allen Löschungsanfragen als Absender verwendet.
+  Die Daten bleiben lokal in der SQLite-DB – kein Cloud-Zugriff.
+</p>
+
+<form method="post" action="/profiles/save" class="form form-grid">
   {% if p %}<input type="hidden" name="profile_id" value="{{ p.id }}">{% endif %}
-  <label>Vorname *<input type="text" name="first_name" value="{{ p.first_name if p else '' }}" required></label>
-  <label>Nachname *<input type="text" name="last_name" value="{{ p.last_name if p else '' }}" required></label>
-  <label>E-Mail<input type="email" name="email" value="{{ p.email if p else '' }}"></label>
-  <label>Straße<input type="text" name="address" value="{{ p.address if p else '' }}"></label>
-  <label>PLZ<input type="text" name="zip_code" value="{{ p.zip_code if p else '' }}"></label>
-  <label>Stadt<input type="text" name="city" value="{{ p.city if p else '' }}"></label>
-  <label>Land (2 Buchstaben)<input type="text" name="country" maxlength="2" value="{{ p.country if p else 'DE' }}"></label>
-  <label>Telefon<input type="text" name="phone" value="{{ p.phone if p else '' }}"></label>
-  <label>Geburtsdatum<input type="date" name="date_of_birth" value="{{ p.date_of_birth if p else '' }}"></label>
-  <label>Notizen<textarea name="notes" rows="3">{{ p.notes if p else '' }}</textarea></label>
-  <p class="hint">Diese Daten verwenden Löschungsanfragen zur Identifikation. Sie bleiben lokal in der SQLite-DB.</p>
-  <button type="submit">Speichern</button>
-  <a class="btn" href="/profiles">Abbrechen</a>
+
+  <div class="form-row">
+    <label for="first_name">Vorname *</label>
+    <input id="first_name" type="text" name="first_name" value="{{ p.first_name if p else '' }}" required>
+  </div>
+
+  <div class="form-row">
+    <label for="last_name">Nachname *</label>
+    <input id="last_name" type="text" name="last_name" value="{{ p.last_name if p else '' }}" required>
+  </div>
+
+  <div class="form-row">
+    <label for="email">E-Mail</label>
+    <input id="email" type="email" name="email" value="{{ p.email if p else '' }}" placeholder="name@beispiel.de">
+  </div>
+
+  <div class="form-row">
+    <label for="phone">Telefon</label>
+    <input id="phone" type="tel" name="phone" value="{{ p.phone if p else '' }}" placeholder="+49 …">
+  </div>
+
+  <div class="form-row">
+    <label for="date_of_birth">Geburtsdatum</label>
+    <input id="date_of_birth" type="date" name="date_of_birth" value="{{ p.date_of_birth if p else '' }}">
+  </div>
+
+  <div class="form-row">
+    <label for="address">Straße, Nr.</label>
+    <input id="address" type="text" name="address" value="{{ p.address if p else '' }}" placeholder="Musterstraße 1">
+  </div>
+
+  <div class="form-row form-row-3">
+    <div>
+      <label for="zip_code">PLZ</label>
+      <input id="zip_code" type="text" name="zip_code" value="{{ p.zip_code if p else '' }}" placeholder="10115">
+    </div>
+    <div>
+      <label for="city">Stadt</label>
+      <input id="city" type="text" name="city" value="{{ p.city if p else '' }}" placeholder="Berlin">
+    </div>
+    <div>
+      <label for="country">Land</label>
+      <input id="country" type="text" name="country" maxlength="2" value="{{ p.country if p else 'DE' }}">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label for="notes">Notizen</label>
+    <textarea id="notes" name="notes" rows="3" placeholder="Optionale Anmerkungen…">{{ p.notes if p else '' }}</textarea>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit">Speichern</button>
+    <a class="btn btn-ghost" href="/profiles">Abbrechen</a>
+  </div>
 </form>
 {% endblock %}

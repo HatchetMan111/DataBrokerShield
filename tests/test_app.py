@@ -186,3 +186,36 @@ def test_reseed_is_post_only(client):
     assert r.status_code == 405
     r = client.post("/api/reseed")
     assert r.json()["ok"] is True
+
+
+def test_help_page(client):
+    r = client.get("/help")
+    assert r.status_code == 200
+    assert "Schritt für Schritt" in r.text
+    assert "DSGVO Art. 17" in r.text
+    assert "Bulk-Anfragen" in r.text
+
+
+def test_bulk_create_requests(client, profile_id):
+    # Zwei Broker auswählen → 2 Anfragen erstellen
+    r = client.post(
+        "/requests/bulk-create",
+        data={
+            "profile_id": profile_id,
+            "broker_pks": [1, 2],
+            "law_basis": "DSGVO Art. 17",
+        },
+        follow_redirects=False,
+    )
+    assert r.status_code == 303
+    assert r.headers["location"] == "/requests"
+
+    r = client.get("/requests")
+    assert r.status_code == 200
+    #mind. 2 Anfragen in der Liste
+    assert r.text.count("geplant") >= 2
+
+    # Detail-Ansicht der ersten Anfrage prüfen
+    r = client.get("/requests/1")
+    assert "Art. 17" in r.text
+    assert "Muster" in r.text

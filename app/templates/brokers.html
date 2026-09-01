@@ -17,26 +17,80 @@
 
 <p>{{ total }} Treffer (Seite {{ page }})</p>
 
-<table class="table">
-  <tr><th>Name</th><th>Region</th><th>Kategorie</th><th>Quelle</th><th>E-Mail</th><th>Opt-out</th><th></th></tr>
-  {% for b in brokers %}
-  <tr>
-    <td><a href="/brokers/{{ b.id }}">{{ b.name }}</a></td>
-    <td>{{ b.region }}</td>
-    <td>{{ b.category }}</td>
-    <td>{{ b.source }}</td>
-    <td>{{ b.email or '–' }}</td>
-    <td>
-      {% if b.opt_out_url %}<a href="{{ b.opt_out_url }}" target="_blank" rel="noopener">Opt-out-Link</a>{% else %}–{% endif %}
-    </td>
-    <td><a class="btn btn-sm" href="/requests/new?broker_id={{ b.id }}">Anfrage</a></td>
-  </tr>
-  {% endfor %}
-</table>
+<form id="bulk-form" method="post" action="/requests/bulk-create">
+  <input type="hidden" name="law_basis" value="DSGVO Art. 17" id="bulk-law">
+
+  <table class="table" id="broker-table">
+    <tr>
+      <th style="width:30px"><input type="checkbox" id="check-all" class="bulk-check" title="Alle auswählen"></th>
+      <th>Name</th><th>Region</th><th>Kategorie</th><th>Quelle</th><th>E-Mail</th><th>Opt-out</th><th></th>
+    </tr>
+    {% for b in brokers %}
+    <tr>
+      <td><input type="checkbox" name="broker_pks" value="{{ b.id }}" class="bulk-check broker-check"></td>
+      <td><a href="/brokers/{{ b.id }}">{{ b.name }}</a></td>
+      <td>{{ b.region }}</td>
+      <td>{{ b.category }}</td>
+      <td>{{ b.source }}</td>
+      <td>{{ b.email or '–' }}</td>
+      <td>
+        {% if b.opt_out_url %}<a href="{{ b.opt_out_url }}" target="_blank" rel="noopener">Opt-out</a>{% else %}–{% endif %}
+      </td>
+      <td><a class="btn btn-sm" href="/requests/new?broker_id={{ b.id }}">Anfrage</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</form>
 
 <div class="pager">
   {% if page > 1 %}<a href="/brokers?q={{ q }}&region={{ region }}&page={{ page - 1 }}">&larr; zurück</a>{% endif %}
   <span>Seite {{ page }} von {{ ((total + page_size - 1) // page_size) if total else 1 }}</span>
   {% if page * page_size < total %}<a href="/brokers?q={{ q }}&region={{ region }}&page={{ page + 1 }}">weiter &rarr;</a>{% endif %}
 </div>
+
+<!-- Floating Bulk-Bar -->
+<div class="bulk-bar" id="bulk-bar">
+  <div>
+    <span class="bulk-count" id="bulk-count">0</span> Broker ausgewählt
+    <select id="bulk-profile" name="profile_id" style="margin-left:1rem">
+      {% for p in profiles %}
+      <option value="{{ p.id }}">{{ p.first_name }} {{ p.last_name }}</option>
+      {% endfor %}
+    </select>
+    <select id="bulk-law-select" onchange="document.getElementById('bulk-law').value=this.value" style="margin-left:0.5rem">
+      <option value="DSGVO Art. 17">DSGVO Art. 17</option>
+      <option value="CCPA">CCPA</option>
+      <option value="Generisch">Generisch</option>
+    </select>
+  </div>
+  <button type="submit" form="bulk-form" class="btn" id="bulk-submit">Anfragen erstellen</button>
+</div>
+
+<script>
+(function(){
+  const checkAll = document.getElementById('check-all');
+  const checks = document.querySelectorAll('.broker-check');
+  const bar = document.getElementById('bulk-bar');
+  const count = document.getElementById('bulk-count');
+  const profile = document.getElementById('bulk-profile');
+
+  // Profile-Dropdown nur anzeigen wenn welche existieren
+  if (!profile || profile.options.length === 0) {
+    document.getElementById('bulk-submit').disabled = true;
+    document.getElementById('bulk-submit').title = 'Zuerst ein Profil anlegen';
+  }
+
+  function update() {
+    const n = document.querySelectorAll('.broker-check:checked').length;
+    count.textContent = n;
+    bar.classList.toggle('active', n > 0);
+  }
+
+  checkAll.addEventListener('change', function(){
+    checks.forEach(c => c.checked = this.checked);
+    update();
+  });
+  checks.forEach(c => c.addEventListener('change', update));
+})();
+</script>
 {% endblock %}

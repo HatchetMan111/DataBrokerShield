@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}So funktioniert's{% endblock %}
+{% block content %}
+<h1>So funktioniert BrokerShield</h1>
+
+<div class="help-section">
+  <h2>Überblick</h2>
+  <p>
+    BrokerShield ist ein lokales Dashboard, das dir hilft, deine personenbezogenen
+    Daten bei Datenbrokern zu löschen. Es läuft komplett auf deinem Rechner (Proxmox-LXC),
+    nutzt keine Cloud-Dienste und speichert alles lokal in einer SQLite-Datenbank.
+  </p>
+  <p>
+    <strong>BrokerShield verschickt keine Daten an Dritte</strong> – es erzeugt
+    fertige Löschungsanfragen, die du per E-Mail, Opt-out-Formular oder Brief
+    an die Broker sendest (oder optional per SMTP direkt aus der UI).
+  </p>
+</div>
+
+<div class="help-section">
+  <h2>Schritt für Schritt</h2>
+
+  <div class="help-step">
+    <div class="help-num">1</div>
+    <div>
+      <h3>Profil anlegen</h3>
+      <p>
+        Unter <a href="/profiles">Profile</a> trägst du deine persönlichen Daten ein:
+        Name, Adresse, E-Mail, Telefon, Geburtsdatum. Diese Daten brauchen die Broker,
+        um deine Einträge in ihren Datenbanken zu finden und zu löschen.
+        <strong>Alle Daten bleiben lokal</strong> – kein Zugriff von außen.
+      </p>
+    </div>
+  </div>
+
+  <div class="help-step">
+    <div class="help-num">2</div>
+    <div>
+      <h3>Broker aussuchen</h3>
+      <p>
+        Unter <a href="/brokers">Broker</a> findest du 770+ Datenbroker (US, EU, global).
+        Du kannst nach Name, Region oder Kategorie filtern. Jeder Broker hat
+        Kontakt-E-Mail und einen Opt-out-Link, sofern verfügbar.
+      </p>
+    </div>
+  </div>
+
+  <div class="help-step">
+    <div class="help-num">3</div>
+    <div>
+      <h3>Löschungsanfrage erzeugen</h3>
+      <p>
+        Klicke bei einem Broker auf <strong>„Anfrage"</strong> oder nutze die
+        <a href="/requests/new">neue Anfrage</a>-Seite. Wähle dein Profil und die
+        Rechtsgrundlage:
+      </p>
+      <ul>
+        <li><strong>DSGVO Art. 17</strong> – für EU-Bürger (empfohlen in DE/Ö/CH)</li>
+        <li><strong>CCPA</strong> – für Kalifornien/USA</li>
+        <li><strong>Generisch</strong> – funktioniert überall</li>
+      </ul>
+      <p>
+        BrokerShield erzeugt automatisch einen fertigen Löschtext mit deinen
+        Profildaten. Du kannst ihn in der Detail-Ansicht kopieren, als .eml
+        herunterladen oder direkt per SMTP versenden.
+      </p>
+    </div>
+  </div>
+
+  <div class="help-step">
+    <div class="help-num">4</div>
+    <div>
+      <h3>Status verfolgen</h3>
+      <p>
+        Jede Anfrage hat einen Status, den du in der <a href="/requests">Pipeline</a> pflegst:
+      </p>
+      <ul>
+        <li><strong>geplant</strong> – Anfrage erzeugt, noch nicht versendet</li>
+        <li><strong>angefragt</strong> – Text versendet (per SMTP oder manuell)</li>
+        <li><strong>bestätigt</strong> – Broker hat geantwortet / bearbeitet</li>
+        <li><strong>gelöscht</strong> – Daten entfernt (nächster Re-Check in 180 Tagen)</li>
+        <li><strong>wieder-aufgetaucht</strong> – Broker hat Daten erneut gescraped</li>
+        <li><strong>blockiert</strong> – Broker reagiert nicht / Verfahren läuft</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="help-step">
+    <div class="help-num">5</div>
+    <div>
+      <h3>Wiedervorlagen im Blick behalten</h3>
+      <p>
+        Datenbroker kaufen und verkaufen Daten kontinuierlich – nach einer
+        erfolgreichen Löschung können sie wieder auftauchen. BrokerShield
+        erinnert dich auf der <a href="/rechecks">Wiedervorlage</a>-Seite
+        an fällige Re-Checks (standardmäßig 180 Tage nach „gelöscht").
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="help-section">
+  <h2>Bulk-Anfragen</h2>
+  <p>
+    Auf der <a href="/brokers">Broker-Seite</a> kannst du mehrere Broker
+    mit Häkchen auswählen und dann auf <strong>„Anfragen erstellen"</strong>
+    klicken. Für jeden ausgewählten Broker wird automatisch eine Anfrage
+    mit dem gewählten Profil und der Rechtsgrundlage angelegt.
+  </p>
+</div>
+
+<div class="help-section">
+  <h2>Ollama-Assistent (optional)</h2>
+  <p>
+    Falls du einen lokalen Ollama-Server betreibst, kannst du unter
+    <a href="/settings">Einstellungen</a> die URL eintragen (z.B.
+    <code>http://192.168.1.50:11434</code>). Der
+    <a href="/assistant">Assistent</a> hilft dann beim Formulieren
+    von Nachfass-Erinnerungen, DSGVO-Anfragen oder allgemeinen
+    Datenschutz-Fragen. Der LXC braucht dafür keine GPU – Ollama
+    läuft extern.
+  </p>
+</div>
+
+<div class="help-section">
+  <h2>SMTP-Versand (optional)</h2>
+  <p>
+    Unter <a href="/settings">Einstellungen</a> kannst du einen
+    SMTP-Server konfigurieren (z.B. Gmail mit App-Password). Dann
+    kannst du Löschungsanfragen direkt aus der UI versenden, statt
+    die Texte manuell zu kopieren.
+  </p>
+  <p>
+    <strong>Ohne SMTP</strong>: Kopiere den Anfragetext aus der
+    Anfrage-Detailseite und sende ihn per E-Mail an den Broker
+    oder nutze den Opt-out-Link auf der Broker-Seite.
+  </p>
+</div>
+
+<div class="help-section">
+  <h2>Rechtlicher Hinweis</h2>
+  <p>
+    BrokerShield ist kein Rechtsberatungstool. Die erzeugten Texte
+    basieren auf gängigen Datenschutzgesetzen (DSGVO Art. 17, CCPA).
+    Nicht jeder Broker ist gesetzlich zur Löschung verpflichtet,
+    Fristen variieren (DSGVO: i.d.R. 30 Tage). BrokerShield
+    tracks den Status und erinnert an Re-Checks – die eigentliche
+    Kommunikation mit den Brokern liegt in deiner Hand.
+  </p>
+</div>
+{% endblock %}

@@ -229,6 +229,39 @@ def set_status(request_id: int, status: str = Form(...)):
     return RedirectResponse(f"/requests/{request_id}", status_code=303)
 
 
+@router.post("/requests/bulk-create")
+def bulk_create(
+    profile_id: int = Form(...),
+    broker_pks: list[int] = Form(default=[]),
+    law_basis: str = Form(default="DSGVO Art. 17"),
+):
+    try:
+        law = LawBasis(law_basis)
+    except ValueError:
+        law = LawBasis.generic
+
+    created = 0
+    with SessionLocal() as db:
+        profile = db.get(Profile, profile_id)
+        if profile is None:
+            raise HTTPException(400, "Profil ungültig")
+        for broker_pk in broker_pks:
+            broker = db.get(Broker, broker_pk)
+            if broker is None:
+                continue
+            tr = TakedownRequest(
+                profile_id=profile_id,
+                broker_id=broker_pk,
+                status=RequestStatus.planned,
+                law_basis=law,
+            )
+            tr.request_text = build_request_text(profile, broker.name, law)
+            db.add(tr)
+            created += 1
+        db.commit()
+    return RedirectResponse("/requests", status_code=303)
+
+
 @router.get("/rechecks", response_class=HTMLResponse)
 def due_rechecks(request: Request):
     now = utcnow()

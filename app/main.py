@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from .auth import auth_middleware, is_authenticated, login_response, logout_response
@@ -93,3 +93,10 @@ def logout():
 @app.get("/healthz")
 def healthz():
     return {"status": "ok"}
+
+
+@app.get("/help", response_class=HTMLResponse)
+def help_page(request: Request):
+    from fastapi.templating import Jinja2Templates
+    templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
+    return templates.TemplateResponse(request, "help.html")
